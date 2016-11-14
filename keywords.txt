@@ -1,0 +1,22 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MD_AButton	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+setKeyId	KEYWORD2
+setDetectTime	KEYWORD2
+setRepeatTime	KEYWORD2
+getKey	KEYWORD2
+
+######################################
+# Constants (LITERAL1)
+#######################################
+KEY_NONE	LITERAL1
