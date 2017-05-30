@@ -24,92 +24,69 @@
 
 typedef struct
 {
-  int	adcThreshold;		// Average analog value (PULLUP and no PULLUP)
-  int	adcTolerance;		// Valid range will be Average +/- Tolerance
-  char	value;				// value returned to the caller
+  uint16_t  adcThreshold; // Average analog value (PULLUP and no PULLUP)
+  uint8_t   adcTolerance; // Valid range will be adcThreshold +/- Tolerance
+  uint8_t   value;        // value returned to the caller
 } TKEYDEF;
 
 TKEYDEF keyDefTable[] =
 {
-  { 10, 10, 'R' },	// Right
-  {139, 15, 'U' },	// Up
-  {315, 15, 'D' },	// Down
-  {489, 15, 'L' },	// Left
-  {726, 15, 'S' }	  // Select
+  { 10, 10, 'R' },  // Right
+  {139, 15, 'U' },  // Up
+  {315, 15, 'D' },  // Down
+  {489, 15, 'L' },  // Left
+  {726, 15, 'S' },  // Select
+  { 1025, 0, KEY_NONE }, // No Key
 };
-
-MD_AButton::MD_AButton(uint8_t keyPin)
-{
-	_keyPin = keyPin;
-	_lastReadTime = 0;
-	_lastKeyTime = 0;
-	_lastKey = KEY_NONE;
-	_timeDetect = 100;
-	_timeRepeat = 300;
-}
-
-MD_AButton::~MD_AButton(void)
-{
-}
 
 void MD_AButton::setKeyId(uint8_t id, char c)
 {
-	if ((id >= 0) && (id < ARRAY_SIZE(keyDefTable)))
-	{
-		keyDefTable[id].value = c;
-	}
-}
-
-void MD_AButton::setDetectTime(uint16_t t)
-{
-	_timeDetect = t;
-}
-
-void MD_AButton::setRepeatTime(uint16_t t)
-{
-	_timeRepeat = t;
+  if ((id >= 0) && (id < ARRAY_SIZE(keyDefTable)))
+  {
+    keyDefTable[id].value = c;
+  }
 }
 
 char MD_AButton::getKey(void)
 // Convert ADC value to character
 // return the key code defined in the keyDefTable
-// Only read a key every 100ms. Effectively debounces.
+// Only read a key every _timeDetect ms. Effectively debounces.
 // If a key is kept pressed, auto repeat every 300 milliseconds.
 {
-  int	input = analogRead(_keyPin);
-  char	key = KEY_NONE;
+  int   input = analogRead(_keyPin);
+  char  key = KEY_NONE;
   
   if (millis()-_lastReadTime > _timeDetect)
   {
-	  _lastReadTime = millis();
+    _lastReadTime = millis();
 
-	  // get the analog value and work out what key it is
-	  for (int k = 0; k < ARRAY_SIZE(keyDefTable); k++)
-	  {
-			if ((input >= (keyDefTable[k].adcThreshold - keyDefTable[k].adcTolerance)) &&
-				(input <= (keyDefTable[k].adcThreshold + keyDefTable[k].adcTolerance)))
-			{
-				key = keyDefTable[k].value;
-				break;
-			}
-	  }
+    // get the analog value and work out what key it is
+    for (int k = 0; k < ARRAY_SIZE(keyDefTable); k++)
+    {
+      if ((input >= (keyDefTable[k].adcThreshold - keyDefTable[k].adcTolerance)) &&
+        (input <= (keyDefTable[k].adcThreshold + keyDefTable[k].adcTolerance)))
+      {
+        key = keyDefTable[k].value;
+        break;
+      }
+    }
 
-	  // check if this is the same as before and do auto repeat if timing is right
-	  if ((key == _lastKey) && (_lastKey != KEY_NONE))
-	  {
-		  if (millis() - _lastKeyTime < _timeRepeat)
-			  // don't repeat yet
-			  key = KEY_NONE;
-		  else
-			  // remember this repeat time for next time
-			  _lastKeyTime = millis();
-	  }
-	  else
-	  {
-			// save the key for next time
-			_lastKey = key;
-			_lastKeyTime = millis();
-	  }
+    // check if this is the same as before and do auto repeat if timing is right
+    if ((key == _lastKey) && (_lastKey != KEY_NONE))
+    {
+      if (millis() - _lastKeyTime < _timeRepeat)
+        // don't repeat yet
+        key = KEY_NONE;
+      else
+        // remember this repeat time for next time
+        _lastKeyTime = millis();
+    }
+    else
+    {
+      // save the key for next time
+      _lastKey = key;
+      _lastKeyTime = millis();
+    }
   }
   
   return(key);
