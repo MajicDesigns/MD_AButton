@@ -30,7 +30,7 @@ const uint8_t KEY_NONE = '\0';
 class MD_AButton 
 {
 public:
-  MD_AButton::MD_AButton(uint8_t keyPin) :
+  MD_AButton(uint8_t keyPin) :
       _keyPin(keyPin), _lastKey(KEY_NONE),
       _lastReadTime(0), _lastKeyTime(0),
       _timeDetect(50), _timeRepeat(300)
