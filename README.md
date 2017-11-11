@@ -1,3 +1,8 @@
+This library is now replaced by the MD_UISwitch_Analog Class in the MD_UISwitch Library available [here](https://MajicDesigns.github/MD_UISwitch/)
+-
+
+# MD_AButton
+
 Small library to handle the analog keys that come on an LCD shield. 
 
 Implements debouncing and auto repeat of keys with configurable timing. Extensible to multiple buttons/switches.
